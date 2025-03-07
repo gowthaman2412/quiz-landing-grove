@@ -101,7 +101,7 @@ export const useFaceDetection = ({
 
   // Detect face
   const detectFace = async () => {
-    if (!videoRef.current || !cameraEnabled || !isInitialized || !videoRef.current.readyState === 4) {
+    if (!videoRef.current || !cameraEnabled || !isInitialized || videoRef.current.readyState !== 4) {
       return false;
     }
     
