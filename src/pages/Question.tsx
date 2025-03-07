@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Clock, Flag, CheckCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 
 // Mock question content
 const getQuestionContent = (id: number, sectionId: number) => {
@@ -33,17 +35,24 @@ const Question = () => {
   
   // Get quiz state from Zustand store
   const currentQuestionId = useQuizStore(state => state.currentQuestionId);
+  const currentSectionId = useQuizStore(state => state.currentSectionId);
   const questions = useQuizStore(state => state.questions);
   const sections = useQuizStore(state => state.sections);
   const testStarted = useQuizStore(state => state.testStarted);
   const goToQuestion = useQuizStore(state => state.goToQuestion);
   const answerQuestion = useQuizStore(state => state.answerQuestion);
   const getRemainingTime = useQuizStore(state => state.getRemainingTime);
+  const getSectionRemainingTime = useQuizStore(state => state.getSectionRemainingTime);
   const getCompletionStatus = useQuizStore(state => state.getCompletionStatus);
+  const getSectionQuestions = useQuizStore(state => state.getSectionQuestions);
+  const submitSection = useQuizStore(state => state.submitSection);
   
-  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
+  const [remainingTime, setRemainingTime] = useState(getSectionRemainingTime());
   const currentQuestion = questions.find(q => q.id === currentQuestionId);
-  const currentSection = currentQuestion ? sections.find(s => s.id === currentQuestion.sectionId) : null;
+  const currentSection = sections.find(s => s.id === currentSectionId);
+  
+  // Only get questions for the current section
+  const sectionQuestions = currentSection ? getSectionQuestions(currentSection.id) : [];
   
   const completionStatus = getCompletionStatus();
   
@@ -58,17 +67,21 @@ const Question = () => {
   // Update timer every second
   useEffect(() => {
     const timer = setInterval(() => {
-      const time = getRemainingTime();
+      const time = getSectionRemainingTime();
       setRemainingTime(time);
       
       if (time <= 0) {
-        // Auto-submit when time runs out
-        navigate("/");
+        // Auto-submit section when time runs out
+        toast({
+          title: "Time's up!",
+          description: `Moving to the next section.`,
+        });
+        submitSection();
       }
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [getRemainingTime, navigate]);
+  }, [getSectionRemainingTime, submitSection]);
   
   // Redirect if test hasn't started
   useEffect(() => {
@@ -88,15 +101,21 @@ const Question = () => {
   
   const questionContent = getQuestionContent(currentQuestion.id, currentQuestion.sectionId);
   
-  // Calculate question number and progress
-  const sectionStartId = questions.findIndex(q => q.sectionId === currentQuestion.sectionId && 
-                                            q.id !== currentQuestion.id) + 1;
-  const questionNumber = currentQuestion.id - sectionStartId + 1;
+  // Calculate question number (relative to the current section)
+  const questionIndex = sectionQuestions.findIndex(q => q.id === currentQuestionId);
+  const questionNumber = questionIndex + 1;
+  
+  // Calculate progress within the current section
   const progress = (completionStatus.answeredQuestions / completionStatus.totalQuestions) * 100;
   
   // Handle option selection
   const handleSelectOption = (value: string) => {
     answerQuestion(currentQuestion.id, value);
+  };
+  
+  // Handle section submission
+  const handleSubmitSection = () => {
+    submitSection();
   };
   
   return (
@@ -113,7 +132,7 @@ const Question = () => {
                   {currentSection.title}
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Section {currentQuestion.sectionId} of {sections.length}
+                  Part {currentSection.id} of {sections.length}
                 </p>
               </div>
               
@@ -128,9 +147,12 @@ const Question = () => {
             <Card className={`border shadow-soft ${loading ? "" : "animate-fade-in"}`}>
               <CardHeader className="bg-gray-50 py-4 border-b">
                 <div className="flex justify-between items-center">
-                  <h3 className="font-medium">
-                    Question {questionNumber} of {currentSection.questionCount}
-                  </h3>
+                  <div>
+                    <div className="text-xs uppercase text-gray-500 font-medium mb-1">PASSAGE SINGLE CHOICE QUESTION</div>
+                    <h3 className="font-medium">
+                      Question {questionNumber} of {currentSection.questionCount}
+                    </h3>
+                  </div>
                   
                   <div className="flex items-center gap-2">
                     {currentQuestion.status === 'marked-for-review' || 
@@ -151,7 +173,7 @@ const Question = () => {
               
               <CardContent className="py-5">
                 <div className="space-y-6">
-                  <p className="text-gray-800">{questionContent.questionText}</p>
+                  <p className="text-gray-800 font-medium">{questionContent.questionText}</p>
                   
                   <RadioGroup 
                     onValueChange={handleSelectOption} 
@@ -170,6 +192,7 @@ const Question = () => {
                         >
                           {option}
                         </Label>
+                        <div className="text-gray-400 font-medium">{index + 1}</div>
                       </div>
                     ))}
                   </RadioGroup>
@@ -186,17 +209,36 @@ const Question = () => {
           <div className={`bg-white border rounded-lg shadow-soft p-5 h-fit ${loading ? "" : "animate-fade-in"}`}>
             <div className="space-y-5">
               <div>
-                <h3 className="font-semibold text-gray-800 mb-2">Progress</h3>
-                <div className="w-full bg-gray-200 h-2 rounded-full">
+                <div className="text-center mb-4">
+                  <div className="text-xs uppercase tracking-wide text-gray-500 font-medium">STEM ASSESSMENT</div>
+                  <h3 className="font-medium text-gray-800">Part {currentSection.id} of 4: {currentSection.title}</h3>
+                </div>
+                
+                <div className="w-full bg-gray-200 h-2 rounded-full mb-3">
                   <div 
                     className="bg-blue-600 h-2 rounded-full transition-all duration-700 ease-out"
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
-                <div className="flex justify-between mt-2 text-sm text-gray-500">
-                  <span>Completed: {completionStatus.answeredQuestions}/{completionStatus.totalQuestions}</span>
-                  <span>{Math.round(progress)}%</span>
+                
+                <div className="grid grid-cols-5 gap-2 mb-4">
+                  {sectionQuestions.slice(0, 20).map((question, idx) => (
+                    <QuestionIndicator
+                      key={question.id}
+                      status={question.status}
+                      number={idx + 1}
+                      onClick={() => goToQuestion(question.id)}
+                      isCurrent={question.id === currentQuestionId}
+                    />
+                  ))}
                 </div>
+                
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  onClick={handleSubmitSection}
+                >
+                  Submit Part {currentSection.id}
+                </Button>
               </div>
               
               <Separator />
@@ -223,30 +265,11 @@ const Question = () => {
                 </div>
               </div>
               
-              <Separator />
-              
-              <div className="space-y-4">
-                {sections.map((section) => {
-                  // Get questions for this section
-                  const sectionQuestions = questions.filter(q => q.sectionId === section.id);
-                  
-                  return (
-                    <div key={section.id}>
-                      <h3 className="font-semibold text-gray-800 mb-2">{section.title}</h3>
-                      <div className="grid grid-cols-5 gap-2">
-                        {sectionQuestions.map((question) => (
-                          <QuestionIndicator
-                            key={question.id}
-                            status={question.status}
-                            number={question.id - sectionQuestions[0].id + 1}
-                            onClick={() => goToQuestion(question.id)}
-                            isCurrent={question.id === currentQuestionId}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <Button variant="outline" size="sm" className="flex items-center gap-1">
+                  <Flag size={14} />
+                  <span>Mark For Review</span>
+                </Button>
               </div>
             </div>
           </div>

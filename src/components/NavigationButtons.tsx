@@ -16,11 +16,19 @@ const NavigationButtons = ({ type, animate = true }: NavigationButtonsProps) => 
   
   const startTest = useQuizStore(state => state.startTest);
   const submitTest = useQuizStore(state => state.submitTest);
+  const submitSection = useQuizStore(state => state.submitSection);
   const goToNextQuestion = useQuizStore(state => state.goToNextQuestion);
   const goToPreviousQuestion = useQuizStore(state => state.goToPreviousQuestion);
   const markForReview = useQuizStore(state => state.markForReview);
   const currentQuestionId = useQuizStore(state => state.currentQuestionId);
+  const currentSectionId = useQuizStore(state => state.currentSectionId);
+  const getCurrentSection = useQuizStore(state => state.getCurrentSection);
+  const getSectionQuestions = useQuizStore(state => state.getSectionQuestions);
   const questions = useQuizStore(state => state.questions);
+  const sections = useQuizStore(state => state.sections);
+  
+  const currentSection = getCurrentSection();
+  const sectionQuestions = currentSection ? getSectionQuestions(currentSection.id) : [];
   
   const animateClass = animate ? "animate-fade-in stagger-4" : "";
   
@@ -35,6 +43,22 @@ const NavigationButtons = ({ type, animate = true }: NavigationButtonsProps) => 
     toast({
       title: "Test Submitted",
       description: "Your responses have been recorded successfully.",
+    });
+  };
+  
+  const handleSubmitSection = () => {
+    const sectionName = currentSection?.title || `Section ${currentSectionId}`;
+    const isLastSection = currentSectionId === sections.length;
+    
+    if (isLastSection) {
+      handleSubmitTest();
+      return;
+    }
+    
+    submitSection();
+    toast({
+      title: `${sectionName} Completed`,
+      description: `Moving to the next section.`,
     });
   };
   
@@ -61,8 +85,8 @@ const NavigationButtons = ({ type, animate = true }: NavigationButtonsProps) => 
   }
   
   // For question navigation
-  const isFirstQuestion = currentQuestionId === 1;
-  const isLastQuestion = currentQuestionId === questions.length;
+  const isFirstQuestion = sectionQuestions.length > 0 && currentQuestionId === sectionQuestions[0].id;
+  const isLastQuestion = sectionQuestions.length > 0 && currentQuestionId === sectionQuestions[sectionQuestions.length - 1].id;
   
   return (
     <div className={`flex justify-between items-center gap-3 ${animateClass}`}>
@@ -93,11 +117,11 @@ const NavigationButtons = ({ type, animate = true }: NavigationButtonsProps) => 
         {isLastQuestion ? (
           <Button
             size="sm"
-            onClick={handleSubmitTest}
+            onClick={handleSubmitSection}
             className="flex items-center gap-1 h-9 px-4 bg-green-600 hover:bg-green-700 text-white font-medium transition-all"
           >
             <Check size={16} />
-            <span>Submit Test</span>
+            <span>{currentSectionId === sections.length ? "Submit Test" : `Submit Part ${currentSectionId}`}</span>
           </Button>
         ) : (
           <Button

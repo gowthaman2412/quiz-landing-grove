@@ -1,6 +1,5 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AssessmentInfoProps {
   animate?: boolean;
@@ -48,8 +47,6 @@ interface InfoPointProps {
 }
 
 const InfoPoint = ({ text, isHeading = false, indent = false }: InfoPointProps) => {
-  const isMobile = useIsMobile();
-  
   return (
     <div className={`flex ${indent ? '' : 'items-start'} text-sm md:text-base`}>
       {!isHeading && !indent && (

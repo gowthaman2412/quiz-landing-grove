@@ -39,11 +39,11 @@ const AssessmentHeader = ({ animate = true }: AssessmentHeaderProps) => {
             </div>
             <div className="flex items-center gap-1">
               <div className="h-1.5 w-1.5 bg-blue-300 rounded-full"></div>
-              <span>10 Questions per part</span>
+              <span>20 Questions per part</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="h-1.5 w-1.5 bg-blue-300 rounded-full"></div>
-              <span>2 Hours</span>
+              <span>1 Hour</span>
             </div>
           </div>
         </div>

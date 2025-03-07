@@ -50,24 +50,22 @@ const Index = () => {
         <div className="space-y-6 md:space-y-8">
           <AssessmentHeader animate={!loading} />
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-1 gap-6">
             <AssessmentInfo animate={!loading} />
             
-            <div className="space-y-6">
-              <InstructionItem 
-                title="General Instructions" 
-                items={generalInstructions}
-                animate={!loading}
-                staggerIndex={3}
-              />
-              
-              <InstructionItem 
-                title="Procedure For Answering A Question" 
-                items={procedureInstructions}
-                animate={!loading}
-                staggerIndex={4}
-              />
-            </div>
+            <InstructionItem 
+              title="General Instructions" 
+              items={generalInstructions}
+              animate={!loading}
+              staggerIndex={3}
+            />
+            
+            <InstructionItem 
+              title="Procedure For Answering A Question" 
+              items={procedureInstructions}
+              animate={!loading}
+              staggerIndex={4}
+            />
           </div>
           
           <div className={`border rounded-lg bg-white p-5 shadow-soft ${loading ? "" : "animate-fade-in stagger-5"}`}>
