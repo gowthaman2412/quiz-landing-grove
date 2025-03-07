@@ -4,10 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Flag, Check } from "lucide-react";
 import { useQuizStore } from "@/store/quizStore";
 import { useToast } from "@/hooks/use-toast";
-import { useProctoring } from "@/hooks/use-proctoring";
-import { useFaceDetection } from "@/hooks/use-face-detection";
-import { useState } from "react";
-import FaceDetectionWarning from "./FaceDetectionWarning";
 
 interface NavigationButtonsProps {
   type: 'landing' | 'question';
@@ -17,7 +13,6 @@ interface NavigationButtonsProps {
 const NavigationButtons = ({ type, animate = true }: NavigationButtonsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [verifyingFace, setVerifyingFace] = useState(false);
   
   const startTest = useQuizStore(state => state.startTest);
   const submitTest = useQuizStore(state => state.submitTest);
@@ -29,89 +24,14 @@ const NavigationButtons = ({ type, animate = true }: NavigationButtonsProps) => 
   const currentSectionId = useQuizStore(state => state.currentSectionId);
   const getCurrentSection = useQuizStore(state => state.getCurrentSection);
   const getSectionQuestions = useQuizStore(state => state.getSectionQuestions);
-  const questions = useQuizStore(state => state.questions);
   const sections = useQuizStore(state => state.sections);
-  
-  // Add proctoring hooks
-  const { enterFullScreen } = useProctoring();
-  const {
-    videoRef,
-    isFaceDetected,
-    cameraEnabled,
-    noFaceTime,
-    loadModels,
-    startCamera,
-    stopCamera,
-  } = useFaceDetection({ maxNoFaceTime: 10000 });
   
   const currentSection = getCurrentSection();
   const sectionQuestions = currentSection ? getSectionQuestions(currentSection.id) : [];
   
   const animateClass = animate ? "animate-fade-in stagger-4" : "";
   
-  const handleStartTest = async () => {
-    // First load face api models and initialize
-    toast({
-      title: "Initializing...",
-      description: "Preparing security measures for the test. Please wait.",
-    });
-    
-    await loadModels();
-    
-    // Request camera access and verify face
-    toast({
-      title: "Camera Access Required",
-      description: "Please allow access to your camera for proctoring purposes.",
-    });
-    
-    const cameraStarted = await startCamera();
-    if (!cameraStarted) {
-      toast({
-        title: "Camera Access Denied",
-        description: "Camera access is required to proceed with the test.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Verify face is present
-    setVerifyingFace(true);
-    
-    // Wait for face detection before proceeding
-    let faceDetectionSuccess = false;
-    let attemptsRemaining = 10;
-    
-    while (attemptsRemaining > 0 && !faceDetectionSuccess) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      faceDetectionSuccess = isFaceDetected;
-      attemptsRemaining--;
-    }
-    
-    if (!faceDetectionSuccess) {
-      toast({
-        title: "Face Not Detected",
-        description: "We couldn't detect your face. Please ensure proper lighting and position your face in the camera view.",
-        variant: "destructive",
-      });
-      stopCamera();
-      setVerifyingFace(false);
-      return;
-    }
-    
-    setVerifyingFace(false);
-    
-    // Enter fullscreen
-    const fullscreenSuccess = await enterFullScreen();
-    if (!fullscreenSuccess) {
-      toast({
-        title: "Fullscreen Required",
-        description: "Fullscreen mode is required to proceed with the test.",
-        variant: "destructive",
-      });
-      stopCamera();
-      return;
-    }
-    
+  const handleStartTest = () => {
     startTest();
     navigate("/question");
   };
@@ -119,8 +39,6 @@ const NavigationButtons = ({ type, animate = true }: NavigationButtonsProps) => 
   const handleSubmitTest = () => {
     submitTest();
     navigate("/");
-    document.exitFullscreen().catch(err => console.error("Exit fullscreen error:", err));
-    stopCamera();
     toast({
       title: "Test Submitted",
       description: "Your responses have been recorded successfully.",
@@ -153,30 +71,15 @@ const NavigationButtons = ({ type, animate = true }: NavigationButtonsProps) => 
   
   if (type === 'landing') {
     return (
-      <>
-        <div className={`flex justify-center ${animateClass}`}>
-          <Button 
-            onClick={handleStartTest}
-            size="lg"
-            className="bg-blue-700 hover:bg-blue-800 text-white px-10 h-12 rounded-full shadow-soft transition-all duration-300 hover:shadow-medium"
-            disabled={verifyingFace}
-          >
-            {verifyingFace ? "Verifying Face..." : "Start Test"}
-          </Button>
-        </div>
-        
-        {/* Hidden video element for face detection */}
-        <div className="hidden">
-          <video ref={videoRef} autoPlay playsInline muted />
-        </div>
-        
-        {/* Face detection warning */}
-        <FaceDetectionWarning 
-          show={verifyingFace && !isFaceDetected} 
-          timeRemaining={10000 - noFaceTime} 
-          maxTime={10000}
-        />
-      </>
+      <div className={`flex justify-center ${animateClass}`}>
+        <Button 
+          onClick={handleStartTest}
+          size="lg"
+          className="bg-blue-700 hover:bg-blue-800 text-white px-10 h-12 rounded-full shadow-soft transition-all duration-300 hover:shadow-medium"
+        >
+          Start Test
+        </Button>
+      </div>
     );
   }
   

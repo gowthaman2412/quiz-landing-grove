@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
@@ -12,9 +13,6 @@ import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { useFaceDetection } from "@/hooks/use-face-detection";
-import CameraPreview from "@/components/CameraPreview";
-import FaceDetectionWarning from "@/components/FaceDetectionWarning";
 
 const getQuestionContent = (id: number, sectionId: number) => {
   const section = ["Science", "Technology", "Engineering", "Mathematics"][sectionId - 1];
@@ -50,14 +48,6 @@ const Question = () => {
   const [remainingTime, setRemainingTime] = useState(getSectionRemainingTime());
   const currentQuestion = questions.find(q => q.id === currentQuestionId);
   const currentSection = sections.find(s => s.id === currentSectionId);
-  
-  const {
-    videoRef,
-    isFaceDetected,
-    cameraEnabled,
-    noFaceTime,
-    startCamera,
-  } = useFaceDetection({ maxNoFaceTime: 10000 });
   
   const sectionQuestions = currentSection ? getSectionQuestions(currentSection.id) : [];
   
@@ -271,21 +261,6 @@ const Question = () => {
           </div>
         </div>
       </main>
-      
-      {cameraEnabled && (
-        <CameraPreview
-          videoRef={videoRef}
-          isFaceDetected={isFaceDetected}
-          position="bottom-right"
-          size="small"
-        />
-      )}
-      
-      <FaceDetectionWarning 
-        show={cameraEnabled && !isFaceDetected && noFaceTime > 3000} 
-        timeRemaining={10000 - noFaceTime} 
-        maxTime={10000}
-      />
     </div>
   );
 };
