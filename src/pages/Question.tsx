@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
@@ -13,8 +12,10 @@ import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { useFaceDetection } from "@/hooks/use-face-detection";
+import CameraPreview from "@/components/CameraPreview";
+import FaceDetectionWarning from "@/components/FaceDetectionWarning";
 
-// Mock question content
 const getQuestionContent = (id: number, sectionId: number) => {
   const section = ["Science", "Technology", "Engineering", "Mathematics"][sectionId - 1];
   return {
@@ -33,7 +34,6 @@ const Question = () => {
   const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
   
-  // Get quiz state from Zustand store
   const currentQuestionId = useQuizStore(state => state.currentQuestionId);
   const currentSectionId = useQuizStore(state => state.currentSectionId);
   const questions = useQuizStore(state => state.questions);
@@ -51,12 +51,18 @@ const Question = () => {
   const currentQuestion = questions.find(q => q.id === currentQuestionId);
   const currentSection = sections.find(s => s.id === currentSectionId);
   
-  // Only get questions for the current section
+  const {
+    videoRef,
+    isFaceDetected,
+    cameraEnabled,
+    noFaceTime,
+    startCamera,
+  } = useFaceDetection({ maxNoFaceTime: 10000 });
+  
   const sectionQuestions = currentSection ? getSectionQuestions(currentSection.id) : [];
   
   const completionStatus = getCompletionStatus();
   
-  // Format remaining time for display
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -64,14 +70,12 @@ const Question = () => {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
   
-  // Update timer every second
   useEffect(() => {
     const timer = setInterval(() => {
       const time = getSectionRemainingTime();
       setRemainingTime(time);
       
       if (time <= 0) {
-        // Auto-submit section when time runs out
         toast({
           title: "Time's up!",
           description: `Moving to the next section.`,
@@ -83,13 +87,11 @@ const Question = () => {
     return () => clearInterval(timer);
   }, [getSectionRemainingTime, submitSection]);
   
-  // Redirect if test hasn't started
   useEffect(() => {
     if (!testStarted) {
       navigate("/");
     }
     
-    // Simulate loading to allow animations
     const timer = setTimeout(() => {
       setLoading(false);
     }, 300);
@@ -101,19 +103,15 @@ const Question = () => {
   
   const questionContent = getQuestionContent(currentQuestion.id, currentQuestion.sectionId);
   
-  // Calculate question number (relative to the current section)
   const questionIndex = sectionQuestions.findIndex(q => q.id === currentQuestionId);
   const questionNumber = questionIndex + 1;
   
-  // Calculate progress within the current section
   const progress = (completionStatus.answeredQuestions / completionStatus.totalQuestions) * 100;
   
-  // Handle option selection
   const handleSelectOption = (value: string) => {
     answerQuestion(currentQuestion.id, value);
   };
   
-  // Handle section submission
   const handleSubmitSection = () => {
     submitSection();
   };
@@ -124,7 +122,6 @@ const Question = () => {
       
       <main className="flex-1 container max-w-6xl px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Question panel */}
           <div className="md:col-span-2 space-y-5">
             <div className="flex justify-between items-center">
               <div className={loading ? "" : "animate-fade-in"}>
@@ -205,7 +202,6 @@ const Question = () => {
             </Card>
           </div>
           
-          {/* Question navigation panel */}
           <div className={`bg-white border rounded-lg shadow-soft p-5 h-fit ${loading ? "" : "animate-fade-in"}`}>
             <div className="space-y-5">
               <div>
@@ -275,6 +271,21 @@ const Question = () => {
           </div>
         </div>
       </main>
+      
+      {cameraEnabled && (
+        <CameraPreview
+          videoRef={videoRef}
+          isFaceDetected={isFaceDetected}
+          position="bottom-right"
+          size="small"
+        />
+      )}
+      
+      <FaceDetectionWarning 
+        show={cameraEnabled && !isFaceDetected && noFaceTime > 3000} 
+        timeRemaining={10000 - noFaceTime} 
+        maxTime={10000}
+      />
     </div>
   );
 };
