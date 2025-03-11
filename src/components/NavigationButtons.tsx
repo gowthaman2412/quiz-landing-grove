@@ -1,9 +1,10 @@
 
-import { Button } from "@/components/ui/button";
+import React from "react";
+import { Button } from "@/components/ui/radix-button";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Flag, Check } from "lucide-react";
 import { useQuizStore } from "@/store/quizStore";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-radix-toast";
 
 interface NavigationButtonsProps {
   type: 'landing' | 'question';
@@ -71,19 +72,17 @@ const NavigationButtons = ({ type, animate = true, disabled = false }: Navigatio
   };
   
   if (type === 'landing') {
-    let designClass
-    if(disabled){
-      designClass="min-w-[140px] px-6 py-2.5 bg-[#ededed] text-[#71808b] rounded-lg inline-flex justify-center items-center gap-2"
-    }else{
-      designClass="bg-blue-700 hover:bg-blue-800 text-white px-10 h-12 rounded-lg shadow-soft transition-all duration-300 hover:shadow-medium"
-    }
+    let designClass = disabled
+      ? "min-w-[140px] px-6 py-2.5 bg-[#ededed] text-[#71808b] rounded-lg inline-flex justify-center items-center gap-2"
+      : "bg-blue-700 hover:bg-blue-800 text-white px-10 h-12 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md";
+    
     return (
       <div className={`flex ${animateClass}`}>
         <Button 
           onClick={handleStartTest}
           size="lg"
           disabled={disabled}
-          className={`relative text-center justify-start text-[#71808b] text-sm font-semibold font-['Inter'] leading-tight${designClass} hover:bg-blue-800 px-10 h-12 rounded-lg shadow-soft transition-all duration-300 hover:shadow-medium disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`relative text-center justify-start text-[#71808b] text-sm font-semibold font-['Inter'] leading-tight ${designClass} disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           Start Test
         </Button>

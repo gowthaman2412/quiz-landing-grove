@@ -1,4 +1,5 @@
 
+import React from "react";
 import { QuestionStatus } from "@/store/quizStore";
 
 interface QuestionIndicatorProps {

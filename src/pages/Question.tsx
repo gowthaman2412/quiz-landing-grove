@@ -1,18 +1,18 @@
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import NavigationButtons from "@/components/NavigationButtons";
 import QuestionIndicator from "@/components/QuestionIndicator";
 import { useQuizStore } from "@/store/quizStore";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/radix-card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radix-radio-group";
+import { Label } from "@/components/ui/radix-label";
 import { Clock, Flag, CheckCircle } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "@/components/ui/radix-separator";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/radix-button";
+import { toast } from "@/hooks/use-radix-toast";
 
 const getQuestionContent = (id: number, sectionId: number) => {
   const section = ["Science", "Technology", "Engineering", "Mathematics"][sectionId - 1];
@@ -131,7 +131,7 @@ const Question = () => {
               </div>
             </div>
             
-            <Card className={`border shadow-soft ${loading ? "" : "animate-fade-in"}`}>
+            <Card className={`border shadow-sm ${loading ? "" : "animate-fade-in"}`}>
               <CardHeader className="bg-gray-50 py-4 border-b">
                 <div className="flex justify-between items-center">
                   <div>
@@ -164,7 +164,7 @@ const Question = () => {
                   
                   <RadioGroup 
                     onValueChange={handleSelectOption} 
-                    value={currentQuestion.userAnswer}
+                    value={currentQuestion.userAnswer || ""}
                     className="space-y-3"
                   >
                     {questionContent.options.map((option, index) => (
@@ -192,7 +192,7 @@ const Question = () => {
             </Card>
           </div>
           
-          <div className={`bg-white border rounded-lg shadow-soft p-5 h-fit ${loading ? "" : "animate-fade-in"}`}>
+          <div className={`bg-white border rounded-lg shadow-sm p-5 h-fit ${loading ? "" : "animate-fade-in"}`}>
             <div className="space-y-5">
               <div>
                 <div className="text-center mb-4">
@@ -220,7 +220,7 @@ const Question = () => {
                 </div>
                 
                 <Button 
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                   onClick={handleSubmitSection}
                 >
                   Submit Part {currentSection.id}

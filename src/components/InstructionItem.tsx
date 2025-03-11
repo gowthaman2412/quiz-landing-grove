@@ -1,5 +1,5 @@
 
-import { Card, CardContent } from "@/components/ui/card";
+import React from 'react';
 
 interface InstructionItemProps {
   title: string;
@@ -24,15 +24,15 @@ const InstructionItem = ({
           <h2 className="font-semibold text-lg">{title}</h2>
         </div>
         
-        <div className=" space-y-2">
+        <div className="space-y-2">
           {items.map((item, index) => (
             <div key={index} className="flex items-start text-sm md:text-base">
               <div className="mt-2.5 mr-2.5 h-1.5 w-1.5 bg-[#696a6f] font-normal rounded-full flex-shrink-0" />
-              <p className="text-[#696a6f] ">{item}</p>
+              <p className="text-[#696a6f]">{item}</p>
             </div>
           ))}
         </div>
-</div>
+    </div>
   );
 };
 

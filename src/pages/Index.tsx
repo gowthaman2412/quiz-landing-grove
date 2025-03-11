@@ -1,13 +1,13 @@
 
+import React, { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import AssessmentHeader from "@/components/AssessmentHeader";
 import AssessmentInfo from "@/components/AssessmentInfo";
 import InstructionItem from "@/components/InstructionItem";
 import NavigationButtons from "@/components/NavigationButtons";
-import { useEffect, useState } from "react";
 import { useQuizStore } from "@/store/quizStore";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/radix-checkbox";
+import { Label } from "@/components/ui/radix-label";
 import TestNavigation from "@/components/NavigationLegends";
 import StemBreadCrumb from "@/components/StemBreadCrumb";
 
@@ -71,17 +71,17 @@ const Index = () => {
             <TestNavigation />
           </div>
           
-            <div className="flex items-start gap-2">
-              <Checkbox 
-                id="terms" 
-                checked={agreeTerms}
-                onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
-                className="mt-1"
-              />
-              <Label htmlFor="terms" className="self-stretch relative justify-start text-[#696a6f] text-xs font-normal font-['Inter'] leading-5">
-                I have read all the instructions carefully and have understood them. I agree not to cheat or use unfair means in this examination. I understand that using unfair means of any sort for my own or someone else's advantage will lead to my immediate disqualification. The decision of TeamCollar.com will be final in these matters and cannot be appealed.
-              </Label>
-            </div>          
+          <div className="flex items-start gap-2">
+            <Checkbox 
+              id="terms" 
+              checked={agreeTerms}
+              onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
+              className="mt-1"
+            />
+            <Label htmlFor="terms" className="self-stretch relative justify-start text-[#696a6f] text-xs font-normal font-['Inter'] leading-5">
+              I have read all the instructions carefully and have understood them. I agree not to cheat or use unfair means in this examination. I understand that using unfair means of any sort for my own or someone else's advantage will lead to my immediate disqualification. The decision of TeamCollar.com will be final in these matters and cannot be appealed.
+            </Label>
+          </div>          
           <div className="">
             <NavigationButtons 
               type="landing" 
