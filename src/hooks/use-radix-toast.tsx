@@ -6,10 +6,12 @@ import {
   ToastActionElement,
   ToastClose,
   ToastDescription,
-  ToastProvider,
   ToastTitle,
   ToastViewport
 } from "@/components/ui/radix-toast";
+
+// Import ToastProvider but rename it to avoid collision
+import { ToastProvider as RadixToastProvider } from "@/components/ui/radix-toast";
 
 type ToasterToast = {
   id: string;
@@ -111,7 +113,8 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const useToast = () => {
+// Rename the internal hook to avoid conflicts
+const useToastInternal = () => {
   const [state, dispatch] = React.useReducer(reducer, {
     toasts: [],
   });
@@ -164,12 +167,13 @@ const useToast = () => {
   };
 };
 
-const ToastContext = React.createContext<ReturnType<typeof useToast> | null>(
+const ToastContext = React.createContext<ReturnType<typeof useToastInternal> | null>(
   null
 );
 
+// Our custom ToastProvider that wraps the RadixToastProvider
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
-  const toast = useToast();
+  const toast = useToastInternal();
 
   return (
     <ToastContext.Provider value={toast}>
@@ -179,6 +183,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// The hook that components will use
 export const useToast = () => {
   const context = React.useContext(ToastContext);
 
@@ -189,11 +194,12 @@ export const useToast = () => {
   return context;
 };
 
+// The Toaster component that renders toast notifications
 export function Toaster() {
   const { toasts } = useToast();
 
   return (
-    <ToastProvider>
+    <RadixToastProvider>
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
           <Toast key={id} {...props}>
@@ -209,10 +215,11 @@ export function Toaster() {
         );
       })}
       <ToastViewport />
-    </ToastProvider>
+    </RadixToastProvider>
   );
 }
 
+// A standalone toast function for direct usage
 export const toast: ToastActionType = ({ ...props }) => {
   const id = Math.random().toString(36).substring(2, 9);
   // This is a simplified version for direct usage

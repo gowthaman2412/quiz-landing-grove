@@ -87,6 +87,9 @@ const ToastDescription = React.forwardRef<
 ))
 ToastDescription.displayName = ToastPrimitives.Description.displayName
 
+// Add the ToastActionElement type that was missing
+type ToastActionElement = React.ReactElement<typeof ToastAction>;
+
 export {
   ToastProvider,
   ToastViewport,
@@ -95,4 +98,5 @@ export {
   ToastDescription,
   ToastClose,
   ToastAction,
+  type ToastActionElement
 }
