@@ -1,5 +1,6 @@
 
 import * as React from "react";
+import * as ToastPrimitives from "@radix-ui/react-toast";
 import { 
   Toast,
   ToastAction,
@@ -10,9 +11,6 @@ import {
   ToastViewport
 } from "@/components/ui/radix-toast";
 
-// Import ToastProvider but rename it to avoid collision
-import { ToastProvider as RadixToastProvider } from "@/components/ui/radix-toast";
-
 type ToasterToast = {
   id: string;
   title?: React.ReactNode;
@@ -22,40 +20,24 @@ type ToasterToast = {
 };
 
 const TOAST_LIMIT = 5;
-const TOAST_REMOVE_DELAY = 1000000;
-
-type ToastActionType = (props: {
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  action?: ToastActionElement;
-  variant?: "default" | "destructive";
-}) => void;
 
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
-  UPDATE_TOAST: "UPDATE_TOAST",
   DISMISS_TOAST: "DISMISS_TOAST",
   REMOVE_TOAST: "REMOVE_TOAST",
 } as const;
 
-type ActionType = typeof actionTypes;
-
 type Action =
   | {
-      type: ActionType["ADD_TOAST"];
+      type: typeof actionTypes.ADD_TOAST;
       toast: ToasterToast;
     }
   | {
-      type: ActionType["UPDATE_TOAST"];
-      toast: Partial<ToasterToast>;
+      type: typeof actionTypes.DISMISS_TOAST;
       id: string;
     }
   | {
-      type: ActionType["DISMISS_TOAST"];
-      id: string;
-    }
-  | {
-      type: ActionType["REMOVE_TOAST"];
+      type: typeof actionTypes.REMOVE_TOAST;
       id: string;
     };
 
@@ -71,14 +53,6 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
-      };
-
-    case "UPDATE_TOAST":
-      return {
-        ...state,
-        toasts: state.toasts.map((t) =>
-          t.id === action.id ? { ...t, ...action.toast } : t
-        ),
       };
 
     case "DISMISS_TOAST": {
@@ -113,117 +87,73 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-// Rename the internal hook to avoid conflicts
-const useToastInternal = () => {
+const ToastContext = React.createContext<{
+  toasts: ToasterToast[];
+  toast: (props: Omit<ToasterToast, "id">) => void;
+  dismiss: (id: string) => void;
+} | null>(null);
+
+export function ToastProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [state, dispatch] = React.useReducer(reducer, {
     toasts: [],
   });
 
   React.useEffect(() => {
     state.toasts.forEach((toast) => {
-      if (!toast.id) return;
-
-      if (toastTimeouts.has(toast.id)) return;
+      if (!toast.id || toastTimeouts.has(toast.id)) return;
 
       const timeout = setTimeout(() => {
-        dispatch({
-          type: "DISMISS_TOAST",
-          id: toast.id,
-        });
-
-        setTimeout(() => {
-          dispatch({
-            type: "REMOVE_TOAST",
-            id: toast.id,
-          });
-        }, 300);
+        dispatch({ type: "REMOVE_TOAST", id: toast.id });
       }, 5000);
 
       toastTimeouts.set(toast.id, timeout);
     });
   }, [state.toasts]);
 
-  const toast: ToastActionType = React.useCallback(
-    ({ ...props }) => {
-      const id = Math.random().toString(36).substring(2, 9);
-
-      dispatch({
-        type: "ADD_TOAST",
-        toast: {
-          id,
-          ...props,
-        },
-      });
-
-      return id;
-    },
-    [dispatch]
-  );
-
-  return {
-    toasts: state.toasts,
-    toast,
-    dismiss: (id: string) => dispatch({ type: "DISMISS_TOAST", id }),
-  };
-};
-
-const ToastContext = React.createContext<ReturnType<typeof useToastInternal> | null>(
-  null
-);
-
-// Our custom ToastProvider that wraps the RadixToastProvider
-export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
-  const toast = useToastInternal();
+  const toast = React.useCallback((props: Omit<ToasterToast, "id">) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    dispatch({
+      type: "ADD_TOAST",
+      toast: { ...props, id },
+    });
+  }, []);
 
   return (
-    <ToastContext.Provider value={toast}>
+    <ToastContext.Provider
+      value={{
+        toasts: state.toasts,
+        toast,
+        dismiss: (id) => dispatch({ type: "DISMISS_TOAST", id }),
+      }}
+    >
       {children}
-      <Toaster />
-    </ToastContext.Provider>
-  );
-};
-
-// The hook that components will use
-export const useToast = () => {
-  const context = React.useContext(ToastContext);
-
-  if (!context) {
-    throw new Error("useToast must be used within a ToastProvider");
-  }
-
-  return context;
-};
-
-// The Toaster component that renders toast notifications
-export function Toaster() {
-  const { toasts } = useToast();
-
-  return (
-    <RadixToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
-        return (
+      <ToastPrimitives.Provider swipeDirection="right">
+        {state.toasts.map(({ id, ...props }) => (
           <Toast key={id} {...props}>
             <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
-              {description && (
-                <ToastDescription>{description}</ToastDescription>
+              {props.title && <ToastTitle>{props.title}</ToastTitle>}
+              {props.description && (
+                <ToastDescription>{props.description}</ToastDescription>
               )}
             </div>
-            {action}
+            {props.action}
             <ToastClose />
           </Toast>
-        );
-      })}
-      <ToastViewport />
-    </RadixToastProvider>
+        ))}
+        <ToastViewport />
+      </ToastPrimitives.Provider>
+    </ToastContext.Provider>
   );
 }
 
-// A standalone toast function for direct usage
-export const toast: ToastActionType = ({ ...props }) => {
-  const id = Math.random().toString(36).substring(2, 9);
-  // This is a simplified version for direct usage
-  // In a real app, this would dispatch to the actual toast provider
-  console.log("Toast:", { id, ...props });
-  return id;
-};
+export function useToast() {
+  const context = React.useContext(ToastContext);
+  if (!context) {
+    throw new Error("useToast must be used within a ToastProvider");
+  }
+  return context;
+}
