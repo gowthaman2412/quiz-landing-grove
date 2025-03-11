@@ -19,22 +19,20 @@ const InstructionItem = ({
     : "";
   
   return (
-    <Card className={`border shadow-soft overflow-hidden ${animateClass}`}>
-      <CardContent className="p-0">
-        <div className="bg-gray-50 px-5 py-4 border-b">
+    <div className="bg-white mt-6 pb-6 border-b">
+        <div className="mb-3">
           <h2 className="font-semibold text-lg">{title}</h2>
         </div>
         
-        <div className="p-5 space-y-3">
+        <div className=" space-y-2">
           {items.map((item, index) => (
             <div key={index} className="flex items-start text-sm md:text-base">
-              <div className="mt-1.5 mr-2.5 h-1.5 w-1.5 bg-blue-500 rounded-full flex-shrink-0" />
-              <p className="text-gray-700">{item}</p>
+              <div className="mt-2.5 mr-2.5 h-1.5 w-1.5 bg-[#696a6f] font-normal rounded-full flex-shrink-0" />
+              <p className="text-[#696a6f] ">{item}</p>
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+</div>
   );
 };
 

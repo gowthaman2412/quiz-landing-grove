@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { useQuizStore } from "@/store/quizStore";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import TestNavigation from "@/components/NavigationLegends";
+import StemBreadCrumb from "@/components/StemBreadCrumb";
 
 const generalInstructions = [
   "Each question is timed",
@@ -45,12 +47,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      
-      <main className="flex-1 container max-w-5xl px-4 py-6 md:py-8">
-        <div className="space-y-6 md:space-y-8">
+      <StemBreadCrumb/>
+      <main className="flex-1 container max-w-6xl md:py-8">
+        <div className="space-y-5 md:space-y-5">
           <AssessmentHeader animate={!loading} />
           
-          <div className="grid md:grid-cols-1 gap-6">
+          <div className="px-8 py-8 mt-15 border-[0.1px] bg-white rounded-xl">
             <AssessmentInfo animate={!loading} />
             
             <InstructionItem 
@@ -66,9 +68,9 @@ const Index = () => {
               animate={!loading}
               staggerIndex={4}
             />
+            <TestNavigation />
           </div>
           
-          <div className={`border rounded-lg bg-white p-5 shadow-soft ${loading ? "" : "animate-fade-in stagger-5"}`}>
             <div className="flex items-start gap-2">
               <Checkbox 
                 id="terms" 
@@ -76,16 +78,15 @@ const Index = () => {
                 onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
                 className="mt-1"
               />
-              <Label htmlFor="terms" className="text-sm text-gray-700">
+              <Label htmlFor="terms" className="self-stretch relative justify-start text-[#696a6f] text-xs font-normal font-['Inter'] leading-5">
                 I have read all the instructions carefully and have understood them. I agree not to cheat or use unfair means in this examination. I understand that using unfair means of any sort for my own or someone else's advantage will lead to my immediate disqualification. The decision of TeamCollar.com will be final in these matters and cannot be appealed.
               </Label>
-            </div>
-          </div>
-          
-          <div className="pt-2">
+            </div>          
+          <div className="">
             <NavigationButtons 
               type="landing" 
-              animate={!loading} 
+              animate={!loading}
+              disabled={!agreeTerms}
             />
           </div>
           

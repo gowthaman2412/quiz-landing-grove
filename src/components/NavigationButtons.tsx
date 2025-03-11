@@ -8,9 +8,10 @@ import { useToast } from "@/hooks/use-toast";
 interface NavigationButtonsProps {
   type: 'landing' | 'question';
   animate?: boolean;
+  disabled?: boolean;
 }
 
-const NavigationButtons = ({ type, animate = true }: NavigationButtonsProps) => {
+const NavigationButtons = ({ type, animate = true, disabled = false }: NavigationButtonsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -70,12 +71,19 @@ const NavigationButtons = ({ type, animate = true }: NavigationButtonsProps) => 
   };
   
   if (type === 'landing') {
+    let designClass
+    if(disabled){
+      designClass="min-w-[140px] px-6 py-2.5 bg-[#ededed] text-[#71808b] rounded-lg inline-flex justify-center items-center gap-2"
+    }else{
+      designClass="bg-blue-700 hover:bg-blue-800 text-white px-10 h-12 rounded-lg shadow-soft transition-all duration-300 hover:shadow-medium"
+    }
     return (
-      <div className={`flex justify-center ${animateClass}`}>
+      <div className={`flex ${animateClass}`}>
         <Button 
           onClick={handleStartTest}
           size="lg"
-          className="bg-blue-700 hover:bg-blue-800 text-white px-10 h-12 rounded-full shadow-soft transition-all duration-300 hover:shadow-medium"
+          disabled={disabled}
+          className={`relative text-center justify-start text-[#71808b] text-sm font-semibold font-['Inter'] leading-tight${designClass} hover:bg-blue-800 px-10 h-12 rounded-lg shadow-soft transition-all duration-300 hover:shadow-medium disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           Start Test
         </Button>

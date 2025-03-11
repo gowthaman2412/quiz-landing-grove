@@ -9,21 +9,21 @@ const AssessmentInfo = ({ animate = true }: AssessmentInfoProps) => {
   const animateClass = animate ? "animate-fade-in stagger-2" : "";
   
   return (
-    <Card className={`border shadow-soft overflow-hidden ${animateClass}`}>
-      <CardContent className="p-0">
-        <div className="bg-gray-50 px-5 py-4 border-b">
+         <div className="bg-white relative border-b pb-6">
+         {/* <div>
           <h2 className="font-semibold text-lg">About The Assessment</h2>
-        </div>
+        </div> */}
+        <div className="self-stretch relative justify-start text-[#00213d] text-base font-bold font-['Inter'] mb-3">About The Assessment</div>
         
-        <div className="p-5 space-y-3">
+        <div className="space-y-2 ">
           <InfoPoint text="The total duration of this test is 60 minutes." />
           <InfoPoint text="This test is of 80 Questions each of 1 Marks." />
           <InfoPoint text="Total number of sections in this test is 4." />
           <InfoPoint text="Each section comprises a duration of 15 minutes." />
-          
-          <div className="pt-1">
-            <InfoPoint text="There are following sections in the test:" isHeading />
-            <div className="pl-5 space-y-1.5 mt-2">
+          <InfoPoint text="There are following sections in the test:" />
+
+          <div className="pl-3">
+            <div className="pl-5 space-y-1">
               <InfoPoint text="Section 1 is Science consisting of 20 questions." indent />
               <InfoPoint text="Section 2 is Technology consisting of 20 questions." indent />
               <InfoPoint text="Section 3 is Engineering Awareness consisting of 20 questions." indent />
@@ -35,9 +35,8 @@ const AssessmentInfo = ({ animate = true }: AssessmentInfoProps) => {
           <InfoPoint text="No Marks will be deducted for un-attempted Questions" />
           <InfoPoint text="You are advised to not close the browser window before submitting the test." />
         </div>
-      </CardContent>
-    </Card>
-  );
+      </div> 
+       );  
 };
 
 interface InfoPointProps {
@@ -50,9 +49,9 @@ const InfoPoint = ({ text, isHeading = false, indent = false }: InfoPointProps) 
   return (
     <div className={`flex ${indent ? '' : 'items-start'} text-sm md:text-base`}>
       {!isHeading && !indent && (
-        <div className="mt-1.5 mr-2.5 h-1.5 w-1.5 bg-blue-500 rounded-full flex-shrink-0" />
+        <div className="mt-[8.5px] mr-3 h-1.5 w-1.5 bg-[#696a6f] rounded-full flex-shrink-0" />
       )}
-      <p className={isHeading ? "font-medium" : "text-gray-700"}>
+      <p className={/*isHeading ? "font-medium" : "text-gray-700"*/`self-stretch relative justify-start text-[#696a6f] text-base font-normal font-['Inter'] leading-[25px]`}>
         {text}
       </p>
     </div>
