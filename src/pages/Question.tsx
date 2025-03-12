@@ -12,7 +12,7 @@ import { Clock, Flag, CheckCircle } from "lucide-react";
 import { Separator } from "@/components/ui/radix-separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/radix-button";
-import { toast } from "@/hooks/use-radix-toast";
+import { toast } from "../hooks/use-toast";
 
 const getQuestionContent = (id: number, sectionId: number) => {
   const section = ["Science", "Technology", "Engineering", "Mathematics"][sectionId - 1];
