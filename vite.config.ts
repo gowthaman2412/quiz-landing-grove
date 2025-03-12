@@ -1,3 +1,4 @@
+
 // vite.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
@@ -9,4 +10,7 @@ export default defineConfig(() => ({
     environment: "jsdom",
     setupFiles: "./vitest.setup.ts",
   },
+  server: {
+    port: 8080
+  }
 }));
