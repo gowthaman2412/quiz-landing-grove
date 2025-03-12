@@ -1,15 +1,15 @@
 
 import React, { useEffect, useState } from "react";
-import Header from "@/components/Header";
-import AssessmentHeader from "@/components/AssessmentHeader";
-import AssessmentInfo from "@/components/AssessmentInfo";
-import InstructionItem from "@/components/InstructionItem";
-import NavigationButtons from "@/components/NavigationButtons";
-import { useQuizStore } from "@/store/quizStore";
-import { Checkbox } from "@/components/ui/radix-checkbox";
-import { Label } from "@/components/ui/radix-label";
-import TestNavigation from "@/components/NavigationLegends";
-import StemBreadCrumb from "@/components/StemBreadCrumb";
+import Header from "../components/Header";
+import AssessmentHeader from "../components/AssessmentHeader";
+import AssessmentInfo from "../components/AssessmentInfo";
+import InstructionItem from "../components/InstructionItem";
+import NavigationButtons from "../components/NavigationButtons";
+import { useQuizStore } from "../store/quizStore";
+import { Checkbox } from "../components/ui/radix-checkbox";
+import { Label } from "../components/ui/radix-label";
+import TestNavigation from "../components/NavigationLegends";
+import StemBreadCrumb from "../components/StemBreadCrumb";
 
 const generalInstructions = [
   "Each question is timed",
@@ -32,8 +32,8 @@ const procedureInstructions = [
 const Index = () => {
   const [loading, setLoading] = useState(true);
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const testStarted = useQuizStore((state) => state.testStarted);
-  const testSubmitted = useQuizStore((state) => state.testSubmitted);
+  const testStarted = useQuizStore((state:any) => state.testStarted);
+  const testSubmitted = useQuizStore((state:any) => state.testSubmitted);
 
   useEffect(() => {
     // Simulate loading to show animations

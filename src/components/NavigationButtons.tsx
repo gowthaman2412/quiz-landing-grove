@@ -1,10 +1,10 @@
 
 import React from "react";
-import { Button } from "@/components/ui/radix-button";
+import { Button } from "../components/ui/radix-button";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Flag, Check } from "lucide-react";
-import { useQuizStore } from "@/store/quizStore";
-import { useToast } from "@/hooks/use-radix-toast";
+import { useQuizStore } from "../store/quizStore";
+import { useToast } from "../hooks/use-toast";
 
 interface NavigationButtonsProps {
   type: 'landing' | 'question';

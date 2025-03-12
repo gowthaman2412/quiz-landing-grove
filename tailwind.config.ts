@@ -1,106 +1,50 @@
-
-import type { Config } from "tailwindcss";
-
+/** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: ["class"],
-  content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
-  ],
-  prefix: "",
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    container: {
-      center: true,
-      padding: '2rem',
-      screens: {
-        'sm': '640px',
-        'md': '768px',
-        'lg': '1024px',
-        'xl': '1280px',
-        '2xl': '1400px'
-      }
-    },
     extend: {
-      colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))'
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))'
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))'
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))'
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))'
-        },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))'
-        },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))'
-        },
-        blue: {
-          50: '#f0f7ff',
-          100: '#deeeff',
-          200: '#b6ddff',
-          300: '#76c6ff',
-          400: '#38a7ff',
-          500: '#127fff',
-          600: '#0065f5',
-          700: '#0052cc',
-          800: '#0345a7',
-          900: '#083c87',
-        },
-      },
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
-      },
-      boxShadow: {
-        'soft': '0 2px 10px rgba(0, 0, 0, 0.05)',
-        'medium': '0 4px 20px rgba(0, 0, 0, 0.08)',
-        'strong': '0 8px 30px rgba(0, 0, 0, 0.12)',
-        'inner-soft': 'inset 0 2px 4px rgba(0, 0, 0, 0.06)',
-      },
       keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
+        fadeIn: {
+          "0%": { opacity: "0", transform: "translateY(-10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
-        },
-        'pulse-subtle': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.8' },
+        fadeOut: {
+          "0%": { opacity: "1", transform: "translateY(0)" },
+          "100%": { opacity: "0", transform: "translateY(-10px)" },
         },
       },
       animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite',
-      }
-    }
+        fadeIn: "fadeIn 0.3s ease-out",
+        fadeOut: "fadeOut 0.3s ease-out",
+      },
+      appearance: ["none"],
+      backgroundImage: {
+        "gold-pattern": "url('/Assets/icons/Gold Card Shining Element.svg')",
+        "fire-icon": "url('/Assets/icons/Fire icon Blurred.svg')",
+        "diamond-icon": "url('/Assets/icons/diamond Blurred.svg')",
+        "badge-icon": "url('/Assets/icons/Badge Blurred.svg')",
+      },
+      colors: {
+        "accent-blue": "rgba(15, 98, 254)",
+      },
+    },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        ".text-security-disc": {
+          "-webkit-text-security": "disc",
+          "text-security": "disc",
+        },
+        ".scrollbar-hidden::-webkit-scrollbar": {
+          display: "none",
+        },
+        ".scrollbar-hidden": {
+          scrollbarWidth: "none",
+          "-ms-overflow-style": "none",
+        },
+      });
+    },
+  ],
+};

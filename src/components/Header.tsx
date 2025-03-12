@@ -2,7 +2,7 @@
 import Logo from "./Logo";
 import UserAvatar from "./UserAvatar";
 import { Search } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "../hooks/use-mobile";
 
 const Header = () => {
   const isMobile = useIsMobile();

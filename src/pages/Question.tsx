@@ -1,17 +1,17 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import NavigationButtons from "@/components/NavigationButtons";
-import QuestionIndicator from "@/components/QuestionIndicator";
-import { useQuizStore } from "@/store/quizStore";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/radix-card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radix-radio-group";
-import { Label } from "@/components/ui/radix-label";
+import Header from "../components/Header";
+import NavigationButtons from "../components/NavigationButtons";
+import QuestionIndicator from "../components/QuestionIndicator";
+import { useQuizStore } from "../store/quizStore";
+import { Card, CardContent, CardFooter, CardHeader } from "../components/ui/radix-card";
+import { RadioGroup, RadioGroupItem } from "../components/ui/radix-radio-group";
+import { Label } from "../components/ui/radix-label";
 import { Clock, Flag, CheckCircle } from "lucide-react";
-import { Separator } from "@/components/ui/radix-separator";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Button } from "@/components/ui/radix-button";
+import { Separator } from "../components/ui/radix-separator";
+import { useIsMobile } from "../hooks/use-mobile";
+import { Button } from "../components/ui/radix-button";
 import { toast } from "../hooks/use-toast";
 
 const getQuestionContent = (id: number, sectionId: number) => {

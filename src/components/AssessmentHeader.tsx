@@ -1,5 +1,5 @@
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "../hooks/use-mobile";
 import ufo from '../assets/ufo.svg'
 import lgRec from '../assets/bgLgRec.svg'
 import smRec from '../assets/bgSmRec.svg'
