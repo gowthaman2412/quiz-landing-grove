@@ -1,7 +1,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { useState, useEffect } from "react";
-import profileLogo from "@/assets/profileLogo.svg";
+import profileLogo from "../assets/profileLogo.svg";
 
 interface UserAvatarProps {
   size?: 'small' | 'medium' | 'large';
