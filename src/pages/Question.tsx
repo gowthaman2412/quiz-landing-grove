@@ -31,7 +31,6 @@ const Question = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
-  
   const currentQuestionId = useQuizStore(state => state.currentQuestionId);
   const currentSectionId = useQuizStore(state => state.currentSectionId);
   const questions = useQuizStore(state => state.questions);

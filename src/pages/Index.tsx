@@ -68,7 +68,7 @@ const Index = () => {
               animate={!loading}
               staggerIndex={4}
             />
-            <TestNavigation />
+            <TestNavigation></TestNavigation>
           </div>
           
           <div className="flex items-start gap-2">
